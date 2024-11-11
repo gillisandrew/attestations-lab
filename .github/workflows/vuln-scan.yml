@@ -1,0 +1,51 @@
+name: Scan image with Amazon Inspector
+on:
+  workflow_dispatch:
+    inputs:
+      image:
+        required: true
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    environment:
+      name: nonprod
+    permissions:
+      id-token: write
+      attestations: write
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: ${{ env.AWS_ROLE_ARN }}
+      - name: Inspector Scan
+        id: inspector
+        uses: aws-actions/vulnerability-scan-github-action-for-amazon-inspector@v1
+        with:
+          artifact_type: container
+          artifact_path: ${{ github.event.inputs.image }}
+  
+          display_vulnerability_findings: "enabled"
+  
+          # Set vulnerability thresholds; if the number of vulnerabilities is
+          # equal to or greater than any of the specified thresholds, this
+          # action will set the 'vulnerability_threshold_exceeded'
+          # output flag to 1.
+          critical_threshold: 1
+          high_threshold: 1
+          medium_threshold: 1
+          low_threshold: 1
+          other_threshold: 1
+      # - name: Login to GitHub Container Registry
+      #   uses: docker/login-action@v3
+      #   with:
+      #     registry: ghcr.io
+      #     username: ${{ github.actor }}
+      #     password: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Attest Scan
+      #   uses: actions/attest-sbom@v1
+      #   with:
+      #     subject-path: '<PATH TO ARTIFACT>'
+      #     sbom-path: ${{ steps.inspector.outputs.artifact_sbom }}
+      #     push-to-registry: true
