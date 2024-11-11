@@ -44,6 +44,18 @@ jobs:
           medium_threshold: 1
           low_threshold: 1
           other_threshold: 1
+      - name: Display CycloneDX SBOM (JSON)
+        run: cat ${{ steps.inspector.outputs.artifact_sbom }}
+  
+      - name: Display Inspector vulnerability scan results (JSON)
+        run: cat ${{ steps.inspector.outputs.inspector_scan_results }}
+  
+      - name: Display Inspector vulnerability scan results (CSV)
+        run: cat ${{ steps.inspector.outputs.inspector_scan_results_csv }}
+  
+      - name: Display Inspector vulnerability scan results (Markdown)
+        run: cat ${{ steps.inspector.outputs.inspector_scan_results_markdown }}
+   
       # - name: Login to GitHub Container Registry
       #   uses: docker/login-action@v3
       #   with:
