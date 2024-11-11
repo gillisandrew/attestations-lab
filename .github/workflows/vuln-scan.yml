@@ -32,7 +32,7 @@ jobs:
         id: inspector
         uses: aws-actions/vulnerability-scan-github-action-for-amazon-inspector@v1
         with:
-          sbomgen_version: "1.6.0"
+          # sbomgen_version: "1.6.0"
           artifact_type: container
           artifact_path: ${{ github.event.inputs.image }}@${{ github.event.inputs.digest }}
   
